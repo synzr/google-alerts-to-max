@@ -1,5 +1,6 @@
+from google_alerts_to_max.models import Mention
 from bs4 import BeautifulSoup, NavigableString
-from .models import Email, Mention
+from .models import Email
 import re
 
 SOURCE_LINK_STYLE = "text-decoration:none;color:#737373"

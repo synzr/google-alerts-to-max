@@ -1,0 +1,7 @@
+{# Разрешенные теги: https://dev.max.ru/docs-api#HTML #}
+{# В шаблон передаются только mentions (список упоминаний, list[Mention]) #}
+
+<h1>⭐ Упоминания за последнее время:</h1>
+{% for mention in mentions %}
+{{ loop.index }}. <b>{{ mention.theme }}</b> — <a href="{{ mention.url }}">{{ mention.title }}</a>, <i>{{ mention.source }} ({{ mention.source_type|capitalize }})</i>
+{% endfor %}
