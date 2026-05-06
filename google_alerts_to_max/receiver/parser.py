@@ -1,6 +1,7 @@
 from google_alerts_to_max.models import Mention
 from bs4 import BeautifulSoup, NavigableString
 from .models import Email
+from yarl import URL
 import re
 
 SOURCE_LINK_STYLE = "text-decoration:none;color:#737373"
@@ -23,7 +24,7 @@ class NotificationParser:
         :return: Список упоминаний
         """
         soup = BeautifulSoup(email.body, "lxml")
-        parts = NotificationParser._parse_parts(soup)
+        parts = NotificationParser.__parse_parts(soup)
 
         mentions = []
         title = None
@@ -47,7 +48,7 @@ class NotificationParser:
                     subtitle = subtitle_container.find("span").get_text(strip=True)
                     continue
 
-                mention_data = NotificationParser._extract_mention_data(part, title, subtitle)
+                mention_data = NotificationParser.__extract_mention_data(part, title, subtitle)
                 if mention_data:
                     mentions.append(mention_data)
 
@@ -55,7 +56,7 @@ class NotificationParser:
 
     #region Приватные статические методы
     @staticmethod
-    def _parse_parts(soup: BeautifulSoup) -> list:
+    def __parse_parts(soup: BeautifulSoup) -> list:
         """
         Извлекает части письма из таблицы
 
@@ -78,7 +79,7 @@ class NotificationParser:
         ]
 
     @staticmethod
-    def _extract_mention_data(part, title: str, subtitle: str) -> Mention | None:
+    def __extract_mention_data(part, title: str, subtitle: str) -> Mention | None:
         """
         Извлекает данные упоминания из части
 
@@ -98,7 +99,9 @@ class NotificationParser:
         if not mention_link:
             return None
 
-        mention_url = mention_link.get("href", "")
+        mention_url = NotificationParser.__clean_url(
+            mention_link.get("href", "")
+        )
 
         # получаем заголовок упоминания
         title_span = mention_link.find("span")
@@ -119,4 +122,20 @@ class NotificationParser:
             source=mention_source,
             url=mention_url
         )
+
+    @staticmethod
+    def __clean_url(url: str) -> str:
+        """
+        Очистить URL от редиректора Google
+
+        :param url: URL
+        :return: Очищенный URL
+        """
+
+        parsed_url = URL(url)
+
+        if "google" not in parsed_url.host:
+            return url
+
+        return parsed_url.query.get("url", url)
     #endregion
