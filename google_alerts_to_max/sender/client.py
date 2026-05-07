@@ -66,11 +66,15 @@ class MaxClient:
                 params=params,
                 json=message.to_dict(),
             ) as r:
+                data = r.json()
 
                 # проверяем статус ответа
                 r.raise_for_status()
 
                 # возвращаем информацию об отправленном сообщении
-                return Message.from_dict(r.json()["message"])
+                return Message.from_dict(data["message"])
         except Exception as e:
-            raise MaxApiException("Ошибка при отправке сообщения") from e
+            raise MaxApiException(
+                data.get("message", "Ошибка при отправке сообщения"),
+                data["code"]
+            ) from e

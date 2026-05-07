@@ -33,7 +33,7 @@ class Database:
     """
 
     def __init__(self, path: str) -> None:
-        self.__conn = sqlite3.connect(path)
+        self.__conn = sqlite3.connect(path, check_same_thread=False)
 
         # конфигурирование БД перед работой
         self.__enable_wal()
