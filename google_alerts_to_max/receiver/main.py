@@ -1,7 +1,8 @@
 from .parser import NotificationParser
 from .client import ImapClient
 
-GA_NOTIFICATIONS_ADDRESS = "googlealerts-noreply@google.com"
+# GA_NOTIFICATIONS_ADDRESS = "googlealerts-noreply@google.com"
+GA_NOTIFICATIONS_ADDRESS = "netvork109@gmail.com"
 
 
 class Receiver:

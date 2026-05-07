@@ -1,4 +1,5 @@
 from decouple import config
+from pathlib import Path
 
 
 def int_or_none(value: str | None) -> int | None:
@@ -18,3 +19,10 @@ if MAX_USER_ID is not None and MAX_CHAT_ID is not None:
 # Учетные данные к аккаунту Gmail
 GMAIL_CREDENTIALS_USER = config("GMAIL_CREDENTIALS_USER")
 GMAIL_CREDENTIALS_PASS = config("GMAIL_CREDENTIALS_PASS")
+
+# Путь к БД фильтра
+FILTER_DB_PATH = config(
+    "FILTER_DB_PATH",
+    cast=Path,
+    default=Path(__file__).parent.parent / "filter.db"
+)
