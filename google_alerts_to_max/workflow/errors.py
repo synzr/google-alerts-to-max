@@ -34,7 +34,9 @@ class NoNewMentionsException(Exception):
     Исключение отсутствия новых упоминании
     """
 
-    pass
+    def __init__(self, message: str, error: ErrorAttempt) -> None:
+        super().__init__(message)
+        self.error = error
 
 
 class CannotSendMentionsException(Exception):
@@ -42,7 +44,9 @@ class CannotSendMentionsException(Exception):
     Исключение невозможности отправка упоминании
     """
 
-    pass
+    def __init__(self, message: str, error: ErrorAttempt) -> None:
+        super().__init__(message)
+        self.error = error
 
 
 class CannotUpdateFilterException(Exception):
@@ -50,4 +54,6 @@ class CannotUpdateFilterException(Exception):
     Исключение невозможности обновить фильтр
     """
 
-    pass
+    def __init__(self, message: str, error: ErrorAttempt) -> None:
+        super().__init__(message)
+        self.error = error

@@ -34,3 +34,11 @@ FILTER_DB_PATH = config(
     cast=Path,
     default=Path(__file__).parent.parent / "filter.db"
 )
+
+# Настройка логирования
+LOG_LEVEL = config("LOG_LEVEL", default="INFO")
+LOG_FILE_PATH = config(
+    "LOG_FILE_PATH",
+    cast=Path,
+    default=Path(__file__).parent.parent / "google-alerts-to-max.log"
+)
