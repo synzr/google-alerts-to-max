@@ -1,6 +1,6 @@
 from jinja2 import Environment, PackageLoader, select_autoescape
+from google_alerts_to_max.receiver import Mention
 from .models import NewMessage, NewMessageFormat
-from google_alerts_to_max.models import Mention
 
 
 class MessageFormatter:

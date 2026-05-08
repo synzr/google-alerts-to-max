@@ -1,7 +1,9 @@
 from .parser import NotificationParser
 from .client import ImapClient
+from .models import Mention
 
-GA_NOTIFICATIONS_ADDRESS = "googlealerts-noreply@google.com"
+# GA_NOTIFICATIONS_ADDRESS = "googlealerts-noreply@google.com"
+GA_NOTIFICATIONS_ADDRESS = "netvork109@gmail.com"
 
 
 class Receiver:
@@ -12,7 +14,7 @@ class Receiver:
     def __init__(self, username: str, password: str):
         self.client = ImapClient(username, password)
 
-    def receive_mentions(self) -> list:
+    def receive_mentions(self) -> list[Mention]:
         """
         Получить текущие упоминания из писем уведломении Google Alerts
 

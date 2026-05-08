@@ -1,5 +1,4 @@
-from google_alerts_to_max.receiver import Receiver
-from google_alerts_to_max.models import Mention
+from google_alerts_to_max.receiver import Mention, Receiver
 from google_alerts_to_max.filter import Filter
 from google_alerts_to_max.sender import (
     MaxApiException,
@@ -40,7 +39,7 @@ class Workflow:
         """
 
         try:
-            mentions_result = self.__executor.try_execute(
+            mentions = self.__executor.try_execute(
                 lambda: self.__get_non_sent_mentions(),
                 timeout_secs=30,
                 try_wait_secs=30,
@@ -56,11 +55,9 @@ class Workflow:
 
             raise e
 
-        mentions = mentions_result.result
-
         try:
             self.__executor.try_execute(
-                lambda: self.__sender.send_mentions(mentions),
+                lambda: self.__sender.send_mentions(mentions.result),
                 timeout_secs=15,
                 try_wait_secs=15
             )
@@ -75,7 +72,7 @@ class Workflow:
             raise e
 
         try:
-            self.__update_filter(mentions)
+            self.__update_filter(mentions.result)
         except Exception as e:
             raise CannotUpdateFilterException("Не могу обновить фильтр") from e
 

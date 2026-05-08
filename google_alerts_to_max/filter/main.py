@@ -1,4 +1,4 @@
-from google_alerts_to_max.models import Mention
+from google_alerts_to_max.receiver import Mention
 from .hasher import MentionHasher
 from .database import Database
 

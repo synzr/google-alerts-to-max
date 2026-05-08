@@ -1,6 +1,5 @@
-from google_alerts_to_max.models import Mention
 from bs4 import BeautifulSoup, NavigableString
-from .models import Email
+from .models import Mention, Email
 from yarl import URL
 import re
 
