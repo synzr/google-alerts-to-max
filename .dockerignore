@@ -1,0 +1,14 @@
+__pycache__/
+.vscode/
+.venv/
+*.pyc
+*.pyo
+*.pyd
+.git
+.env
+.env.example
+.gitattributes
+.gitignore
+*.db
+*.log
+*.ipynb
