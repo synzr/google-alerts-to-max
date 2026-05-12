@@ -10,8 +10,7 @@ class MessageFormatter:
 
     def __init__(self):
         self.__env = Environment(
-            loader=PackageLoader("google_alerts_to_max"),
-            autoescape=select_autoescape()
+            loader=PackageLoader("google_alerts_to_max"), autoescape=select_autoescape()
         )
 
     def format_message(self, mentions: list[Mention]) -> NewMessage:
@@ -19,11 +18,7 @@ class MessageFormatter:
         Форматирует упоминания в сообщение для отправки в Max
         """
 
-        text = (
-            self.__env
-                .get_template("mentions.html")
-                .render(mentions=mentions)
-        )
+        text = self.__env.get_template("mentions.html").render(mentions=mentions)
 
         return NewMessage(
             text,

@@ -1,15 +1,15 @@
+import email
+from email import policy
 from email.message import Message
+from imaplib import IMAP4_SSL
 from .errors import (
     ImapAuthenticationException,
     ImapNoConnectionException,
     ImapNoMailboxException,
     NoHtmlFoundException,
-    ImapServerException
+    ImapServerException,
 )
-from imaplib import IMAP4_SSL
 from .models import Email
-from email import policy
-import email
 
 IMAP_SERVER = "imap.gmail.com"
 
@@ -21,8 +21,9 @@ class ImapClient:
 
     def __init__(self, username: str, password: str) -> None:
         self.credentials = (username, password)
+        self.imap = None
 
-    #region Публичные методы
+    # region Публичные методы
     def connect(self) -> None:
         """
         Подключаться к серверу IMAP Gmail.
@@ -32,13 +33,13 @@ class ImapClient:
 
         try:
             self.imap.login(*self.credentials)
-        except IMAP4_SSL.error as e:
-            raise ImapAuthenticationException(
-                "Ошибка аутентификации, проверите учетные данные"
-            ) from e
         except IMAP4_SSL.abort as e:
             raise ImapServerException(
                 f"При аутентификации на сервере произошла ошибка: {e}"
+            ) from e
+        except IMAP4_SSL.error as e:
+            raise ImapAuthenticationException(
+                "Ошибка аутентификации, проверите учетные данные"
             ) from e
 
     def disconnect(self) -> None:
@@ -58,7 +59,8 @@ class ImapClient:
 
     def fetch_mail(self, address: str, size: int = 10) -> list[Email]:
         """
-        Получить письма от отдельного адреса (address) до максимального количества (size)
+        Получить письма от отдельного адреса (address)
+        до максимального количества (size)
 
         :param address: Адрес отправителя
         :param size: Максимальное количество писем (по умолчанию: 10)
@@ -69,7 +71,7 @@ class ImapClient:
             raise ImapNoConnectionException("Отсутствует подключение к серверу")
 
         try:
-            self.imap.select('INBOX')
+            self.imap.select("INBOX")
         except IMAP4_SSL.error as e:
             raise ImapNoMailboxException(
                 f"Не удалось получить доступ к папке INBOX: {e}"
@@ -96,9 +98,10 @@ class ImapClient:
             raise ImapServerException(
                 f"При поиске писем от адреса {address} произошла ошибка: {e}"
             ) from e
-    #endregion
 
-    #region Приватные методы
+    # endregion
+
+    # region Приватные методы
     def __get_html_body(self, message: Message) -> Message:
         """
         Получить HTML-тело письма из сырых данных.
@@ -129,7 +132,8 @@ class ImapClient:
         """
 
         message = email.message_from_bytes(
-            raw_message, policy=policy.default,
+            raw_message,
+            policy=policy.default,
         )
 
         # извлекаем заголовки
@@ -139,4 +143,5 @@ class ImapClient:
         body = self.__get_html_body(message)
 
         return Email(id=email_id.decode(), headers=headers, body=body)
-    #endregion
+
+    # endregion

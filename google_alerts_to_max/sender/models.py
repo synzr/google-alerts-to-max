@@ -52,8 +52,7 @@ class BotInfo(User):
             avatar_url=data.get("avatar_url"),
             full_avatar_url=data.get("full_avatar_url"),
             commands=[
-                BotCommand.from_dict(command)
-                for command in data.get("commands", [])
+                BotCommand.from_dict(command) for command in data.get("commands", [])
             ],
         )
 
@@ -90,10 +89,11 @@ class NewMessage:
     def to_dict(self) -> dict:
         return {
             "text": self.text,
-            "attachments": [
-                attachment.to_dict()
-                for attachment in self.attachments
-            ] if self.attachments else None,
+            "attachments": (
+                [attachment.to_dict() for attachment in self.attachments]
+                if self.attachments
+                else None
+            ),
             "link": self.link.to_dict() if self.link else None,
             "notify": self.notify,
             "format": self.format,
@@ -154,23 +154,10 @@ class Message:
         return Message(
             recipient=Recipient.from_dict(data["recipient"]),
             timestamp=data["timestamp"],
-            sender=(
-                User.from_dict(data["sender"])
-                if data.get("sender")
-                else None
-            ),
-            link=(
-                LinkedMessage.from_dict(data["link"]) if data.get("link")
-                else None
-            ),
-            body=(
-                MessageBody.from_dict(data["body"]) if data.get("body")
-                else None
-            ),
-            stat=(
-                MessageStat.from_dict(data["stat"]) if data.get("stat")
-                else None
-            ),
+            sender=(User.from_dict(data["sender"]) if data.get("sender") else None),
+            link=(LinkedMessage.from_dict(data["link"]) if data.get("link") else None),
+            body=(MessageBody.from_dict(data["body"]) if data.get("body") else None),
+            stat=(MessageStat.from_dict(data["stat"]) if data.get("stat") else None),
             url=data.get("url"),
         )
 
@@ -208,10 +195,7 @@ class LinkedMessage:
     def from_dict(data: dict) -> "LinkedMessage":
         return LinkedMessage(
             type=data["type"],
-            sender=(
-                User.from_dict(data["sender"]) if data.get("sender")
-                else None
-            ),
+            sender=(User.from_dict(data["sender"]) if data.get("sender") else None),
             message=MessageBody.from_dict(data["message"]),
             chat_id=data.get("chat_id"),
         )
@@ -237,11 +221,13 @@ class MessageBody:
             text=data.get("text"),
             attachments=(
                 [Attachment.from_dict(a) for a in data["attachments"]]
-                if data.get("attachments") else None
+                if data.get("attachments")
+                else None
             ),
             markup=(
                 [MarkupElement.from_dict(m) for m in data["markup"]]
-                if data.get("markup") else None
+                if data.get("markup")
+                else None
             ),
         )
 
@@ -254,6 +240,10 @@ class Attachment:
 
     type: str
     payload: dict
+
+    @staticmethod
+    def from_dict(data: dict) -> "Attachment":
+        return Attachment(type=data["type"], payload=data["payload"])
 
     def to_dict(self) -> dict:
         return {"type": self.type, "payload": self.payload}

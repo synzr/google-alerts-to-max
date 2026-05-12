@@ -1,3 +1,8 @@
+import logging.config
+import logging
+import traceback
+import time
+import math
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.executors.pool import ThreadPoolExecutor
 from apscheduler.jobstores.memory import MemoryJobStore
@@ -7,9 +12,8 @@ from google_alerts_to_max.workflow import (
     CannotSendMentionsException,
     ExecutionFailedException,
     NoNewMentionsException,
-    Workflow
+    Workflow,
 )
-import logging.config
 from .config import (
     MAX_TOKEN,
     MAX_USER_ID,
@@ -18,12 +22,8 @@ from .config import (
     GMAIL_CREDENTIALS_PASS,
     FILTER_DB_PATH,
     LOG_LEVEL,
-    LOG_FILE_PATH
+    LOG_FILE_PATH,
 )
-import traceback
-import logging
-import time
-import math
 
 
 class Program:
@@ -55,10 +55,7 @@ class Program:
         self.__scheduler = BlockingScheduler(
             jobstores={"default": MemoryJobStore()},
             executors={"default": ThreadPoolExecutor()},
-            job_defaults={
-                "coalesce": False,
-                "max_instances": 1
-            }
+            job_defaults={"coalesce": False, "max_instances": 1},
         )
         self.__logger.debug("Планировщик создан")
 
@@ -69,10 +66,10 @@ class Program:
 
         # настраиваем планировщик и запускаем его
         self.__scheduler.add_job(
-            lambda: self.__workflow_run(),
+            self.__workflow_run,
             IntervalTrigger(
                 hours=4,
-                jitter=120, # 0с...2м задержки
+                jitter=120,  # 0с...2м задержки
             ),
         )
 
@@ -96,7 +93,7 @@ class Program:
         except (
             NoNewMentionsException,
             CannotSendMentionsException,
-            CannotUpdateFilterException
+            CannotUpdateFilterException,
         ) as e:
             self.__logger.info("%s:", e.args[0])
             self.__logger.error("\tОшибка - %s:", str(e.error.exception))
@@ -115,7 +112,9 @@ class Program:
                 self.__logger.error("\t\tTraceback:\n%s", error.traceback)
         except Exception as e:
             self.__logger.error("Неизвестная ошибка:")
-            self.__logger.error("\tВремя ошибка в Unix: %3.14f", math.floor(time.time()))
+            self.__logger.error(
+                "\tВремя ошибка в Unix: %3.14f", math.floor(time.time())
+            )
             self.__logger.error("\tTraceback:\n%s", traceback.format_exc())
 
     def __setup_logging(self) -> None:
@@ -123,27 +122,26 @@ class Program:
         Глобально настроить логгер
         """
 
-        logging.config.dictConfig({
-            "version": 1,
-            "formatters": {
-                "default": {
-                    "format": "%(asctime)s [%(levelname)s] [%(name)s] %(message)s"
-                }
-            },
-            "handlers": {
-                "console": {
-                    "class": "logging.StreamHandler",
-                    "formatter": "default"
+        logging.config.dictConfig(
+            {
+                "version": 1,
+                "formatters": {
+                    "default": {
+                        "format": "%(asctime)s [%(levelname)s] [%(name)s] %(message)s"
+                    }
                 },
-                "file": {
-                    "class": "logging.FileHandler",
-                    "filename": str(LOG_FILE_PATH),
-                    "formatter": "default",
-                    "encoding": "utf-8"
-                }
-            },
-            "root": {
-                "level": LOG_LEVEL,
-                "handlers": ["console", "file"]
+                "handlers": {
+                    "console": {
+                        "class": "logging.StreamHandler",
+                        "formatter": "default",
+                    },
+                    "file": {
+                        "class": "logging.FileHandler",
+                        "filename": str(LOG_FILE_PATH),
+                        "formatter": "default",
+                        "encoding": "utf-8",
+                    },
+                },
+                "root": {"level": LOG_LEVEL, "handlers": ["console", "file"]},
             }
-        })
+        )

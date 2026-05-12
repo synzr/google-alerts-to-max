@@ -1,12 +1,13 @@
+import logging
 from google_alerts_to_max.receiver import Mention
 from .hasher import MentionHasher
 from .database import Database
-import logging
 
 
 class Filter:
     """
-    Фильтр на неотправленные упоминания. Использует БД для хранения уже отправленных упоминаний
+    Фильтр на неотправленные упоминания.
+    Использует БД для хранения уже отправленных упоминаний
     """
 
     def __init__(self, db_path: str) -> None:
@@ -21,7 +22,9 @@ class Filter:
         :param mentions: Список упоминаний
         :return: Список новых упоминаний
         """
-        self.__logger.debug("Фильтрация %d упоминаний на уже отправленные", len(mentions))
+        self.__logger.debug(
+            "Фильтрация %d упоминаний на уже отправленные", len(mentions)
+        )
         mention_checks = self.__db.is_sent_mentions_exist(
             self.__hash_mentions(mentions)
         )
@@ -30,7 +33,9 @@ class Filter:
         for i, mention in enumerate(mentions):
             if not mention_checks[i]:  # если упоминание НЕ отправлено, добавляем его
                 non_sent_mentions.append(mention)
-        self.__logger.info("После фильтрации осталось %d новых упоминаний", len(non_sent_mentions))
+        self.__logger.info(
+            "После фильтрации осталось %d новых упоминаний", len(non_sent_mentions)
+        )
         return non_sent_mentions
 
     def add_sent_mentions(self, mentions: list[Mention]) -> None:
@@ -39,9 +44,7 @@ class Filter:
         :param mention: Упоминание
         """
         self.__logger.debug("Добавление %d отправленных упоминаний в БД", len(mentions))
-        self.__db.add_sent_mentions(
-            self.__hash_mentions(mentions)
-        )
+        self.__db.add_sent_mentions(self.__hash_mentions(mentions))
         self.__logger.info("Отправленные упоминания добавлены в БД")
 
     def clean_sent_mentions(self) -> None:

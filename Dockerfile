@@ -7,9 +7,9 @@ WORKDIR /install
 RUN apt-get update
 
 RUN apt-get install \
-    -y \
-    --no-install-recommends \
-    gcc libxml2-dev libxslt1-dev
+        -y \
+        --no-install-recommends \
+        gcc libxml2-dev libxslt1-dev
 
 RUN rm -rf /var/lib/apt/lists/*
 

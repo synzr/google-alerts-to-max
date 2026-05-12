@@ -1,6 +1,6 @@
 import sqlite3
 
-#region SQL-запросы
+# region SQL-запросы
 CREATE_TABLE_QUERY = """
 CREATE TABLE IF NOT EXISTS `sent_mentions` (
     `hash` TEXT PRIMARY KEY NOT NULL,
@@ -24,7 +24,7 @@ CLEAN_HASHES_QUERY = """
 DELETE FROM `sent_mentions`
 WHERE `sent_mentions`.`added_at` < datetime('now', '-7 days')
 """
-#endregion
+# endregion
 
 
 class Database:
@@ -39,7 +39,7 @@ class Database:
         self.__enable_wal()
         self.__create_tables()
 
-    #region Публичные методы\
+    # region Публичные методы\
     def add_sent_mentions(self, hashes: list[str]) -> None:
         """
         Добавить отправленные упоминания в БД
@@ -65,10 +65,7 @@ class Database:
 
             # динамически создаем запрос на основе списка хешей
             placeholders = ", ".join(["?"] * len(hashes))
-            cursor.execute(
-                MULTIPLE_HASHES_QUERY.format(placeholders),
-                hashes
-            )
+            cursor.execute(MULTIPLE_HASHES_QUERY.format(placeholders), hashes)
 
             # получаем ответ и ищем существущие хэшы
             found_hashes = [row[0] for row in cursor.fetchall()]
@@ -83,9 +80,10 @@ class Database:
             cursor = self.__conn.cursor()
             cursor.execute(CLEAN_HASHES_QUERY)
             self.__conn.commit()
-    #endregion
 
-    #region Приватные методы
+    # endregion
+
+    # region Приватные методы
     def __enable_wal(self) -> None:
         """
         Включить WAL режим. Необходимо для улучшения производительности
@@ -99,4 +97,5 @@ class Database:
         """
         with self.__conn:
             self.__conn.execute(CREATE_TABLE_QUERY)
-    #endregion
+
+    # endregion

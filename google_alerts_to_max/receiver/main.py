@@ -1,14 +1,15 @@
+import logging
 from .parser import NotificationParser
 from .client import ImapClient
 from .models import Mention
-import logging
 
 GA_NOTIFICATIONS_ADDRESS = "googlealerts-noreply@google.com"
 
 
 class Receiver:
     """
-    Получатель. Обрабатывает письма уведломении Google Alerts и получает упоминания из них
+    Получатель. Обрабатывает письма уведломении Google Alerts
+    и получает упоминания из них
     """
 
     def __init__(self, username: str, password: str):
@@ -26,12 +27,12 @@ class Receiver:
 
         try:
             self.__logger.debug("Подключение к серверу IMAP...")
-            self.client.connect() # подключаемся к серверу IMAP
+            self.client.connect()  # подключаемся к серверу IMAP
             self.__logger.debug("Получение писем...")
             emails = self.client.fetch_mail(GA_NOTIFICATIONS_ADDRESS)
             self.__logger.debug("Получено %d писем", len(emails))
         finally:
-            self.client.disconnect() # отключаемся от сервера IMAP
+            self.client.disconnect()  # отключаемся от сервера IMAP
             self.__logger.debug("Отключение от сервера IMAP")
 
         # парсим упоминания из уведомлений
@@ -46,5 +47,7 @@ class Receiver:
 
         # возвращаем только уникальные упоминания
         unique_mentions = list(set(mentions))
-        self.__logger.debug("После удаления дубликатов осталось %d упоминаний", len(unique_mentions))
+        self.__logger.debug(
+            "После удаления дубликатов осталось %d упоминаний", len(unique_mentions)
+        )
         return unique_mentions

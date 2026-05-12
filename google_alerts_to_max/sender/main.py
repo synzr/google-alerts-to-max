@@ -1,8 +1,8 @@
+import logging
 from google_alerts_to_max.receiver import Mention
 from .formatter import MessageFormatter
 from .client import MaxClient
 from .models import BotInfo
-import logging
 
 
 class Sender:

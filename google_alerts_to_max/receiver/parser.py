@@ -1,7 +1,7 @@
-from bs4 import BeautifulSoup, NavigableString
-from .models import Mention, Email
-from yarl import URL
 import re
+from bs4 import BeautifulSoup, NavigableString
+from yarl import URL
+from .models import Mention, Email
 
 SOURCE_LINK_STYLE = "text-decoration:none;color:#737373"
 TITLE_LEFT_PAD_STYLE = "padding-left:32px"
@@ -38,22 +38,32 @@ class NotificationParser:
             if style == TITLE_LEFT_PAD_STYLE:  # заголовок темы
                 title = part.find("span").get_text(strip=True)
                 continue
-            if style == SUBTITLE_LEFT_PAD_STYLE:  # подзаголовок (тип источника); упоминания
+            if (
+                style == SUBTITLE_LEFT_PAD_STYLE
+            ):  # подзаголовок (тип источника); упоминания
                 subtitle_container = part.find(
-                    "td", {"style": "padding:16px 0px 12px 0px;border-bottom:1px solid #e4e4e4"},
+                    "td",
+                    {
+                        "style": (
+                            "padding:16px 0px 12px 0px;"
+                            "border-bottom:1px solid #e4e4e4"
+                        )
+                    },
                 )
 
                 if subtitle_container:
                     subtitle = subtitle_container.find("span").get_text(strip=True)
                     continue
 
-                mention_data = NotificationParser.__extract_mention_data(part, title, subtitle)
+                mention_data = NotificationParser.__extract_mention_data(
+                    part, title, subtitle
+                )
                 if mention_data:
                     mentions.append(mention_data)
 
         return mentions
 
-    #region Приватные статические методы
+    # region Приватные статические методы
     @staticmethod
     def __parse_parts(soup: BeautifulSoup) -> list:
         """
@@ -98,9 +108,7 @@ class NotificationParser:
         if not mention_link:
             return None
 
-        mention_url = NotificationParser.__clean_url(
-            mention_link.get("href", "")
-        )
+        mention_url = NotificationParser.__clean_url(mention_link.get("href", ""))
 
         # получаем заголовок упоминания
         title_span = mention_link.find("span")
@@ -119,7 +127,7 @@ class NotificationParser:
             source_type=subtitle or "",
             title=mention_title,
             source=mention_source,
-            url=mention_url
+            url=mention_url,
         )
 
     @staticmethod
@@ -133,8 +141,9 @@ class NotificationParser:
 
         parsed_url = URL(url)
 
-        if "google" not in parsed_url.host:
+        if "google" not in str(parsed_url.host):
             return url
 
         return parsed_url.query.get("url", url)
-    #endregion
+
+    # endregion

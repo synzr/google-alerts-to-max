@@ -12,3 +12,7 @@ __pycache__/
 *.db
 *.log
 *.ipynb
+requirements-dev.txt
+.pylintrc
+.pre-commit-config.yaml
+pyproject.toml

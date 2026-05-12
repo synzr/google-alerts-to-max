@@ -21,7 +21,7 @@ class ExecutionFailedException(Exception):
         message: str,
         attempts: int,
         time_taken_secs: int,
-        errors: list[ErrorAttempt]
+        errors: list[ErrorAttempt],
     ) -> None:
         super().__init__(message)
         self.attempts = attempts

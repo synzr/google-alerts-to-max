@@ -1,6 +1,6 @@
+from requests import Session
 from .models import NewMessage, Message, BotInfo
 from .errors import MaxApiException
-from requests import Session
 
 USER_AGENT = "google-alerts-to-max/1.0 (+https://github.com/synzr/google-alerts-to-max)"
 BASE_URL = "https://platform-api.max.ru"
@@ -15,10 +15,12 @@ class MaxClient:
         self.__session = Session()
 
         # устанавливаем заголовки
-        self.__session.headers.update({
-            "User-Agent": USER_AGENT,
-            "Authorization": token,
-        })
+        self.__session.headers.update(
+            {
+                "User-Agent": USER_AGENT,
+                "Authorization": token,
+            }
+        )
 
     def get_bot_info(self) -> BotInfo:
         """
@@ -34,7 +36,9 @@ class MaxClient:
                 # возвращаем информацию о боте
                 return BotInfo.from_dict(r.json())
         except Exception as e:
-            raise MaxApiException("Ошибка при получении информации о боте") from e
+            raise MaxApiException(
+                "Ошибка при получении информации о боте", "unknown"
+            ) from e
 
     def send_message(
         self,
@@ -55,10 +59,7 @@ class MaxClient:
         if user_id is None and chat_id is None:
             raise ValueError("Не указан user_id или chat_id")
 
-        params = (
-            {"user_id": user_id} if user_id is not None
-            else {"chat_id": chat_id}
-        )
+        params = {"user_id": user_id} if user_id is not None else {"chat_id": chat_id}
 
         try:
             with self.__session.post(
@@ -75,6 +76,5 @@ class MaxClient:
                 return Message.from_dict(data["message"])
         except Exception as e:
             raise MaxApiException(
-                data.get("message", "Ошибка при отправке сообщения"),
-                data["code"]
+                data.get("message", "Ошибка при отправке сообщения"), data["code"]
             ) from e

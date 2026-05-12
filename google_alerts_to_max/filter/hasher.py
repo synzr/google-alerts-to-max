@@ -1,5 +1,5 @@
-from google_alerts_to_max.receiver import Mention
 import hashlib
+from google_alerts_to_max.receiver import Mention
 
 
 class MentionHasher:

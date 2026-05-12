@@ -3,5 +3,5 @@ from .errors import (
     CannotUpdateFilterException,
     CannotSendMentionsException,
     ExecutionFailedException,
-    NoNewMentionsException
+    NoNewMentionsException,
 )
