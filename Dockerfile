@@ -7,9 +7,9 @@ WORKDIR /install
 RUN apt-get update
 
 RUN apt-get install \
-        -y \
-        --no-install-recommends \
-        gcc libxml2-dev libxslt1-dev
+    -y \
+    --no-install-recommends \
+    gcc libxml2-dev libxslt1-dev
 
 RUN rm -rf /var/lib/apt/lists/*
 
@@ -18,12 +18,12 @@ COPY requirements.txt .
 
 # установляем Python-зависимости
 RUN pip install \
-        --prefix=/install \
-        --no-cache-dir \
-        -r requirements.txt
+    --prefix=/install \
+    --no-cache-dir \
+    -r requirements.txt
 
 # этап приложения
-FROM python:3.14-slim
+FROM python:3.12-slim
 
 # настройка Python окружения
 ENV PYTHONDONTWRITEBYTECODE=1
