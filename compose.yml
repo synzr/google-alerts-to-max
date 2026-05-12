@@ -1,0 +1,22 @@
+volumes:
+    google-alerts-to-max-data:
+        name: 'google_alerts_to_max_data'
+        driver: 'local'
+
+services:
+    google-alerts-to-max:
+        image: 'ghcr.io/synzr/google-alerts-to-max:latest'
+        build:
+            context: '.'
+        container_name: 'google_alerts_to_max'
+        restart: 'unless-stopped'
+        env_file:
+            - '.env'
+        volumes:
+            - 'google-alerts-to-max-data:${DATA_PATH:-/app/data}:rw'
+            - '/var/log/google-alerts-to-max/:${LOG_FILE_PATH:-/app/logs}:rw'
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.5'
+                    memory: '256M'

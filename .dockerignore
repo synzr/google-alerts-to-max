@@ -16,3 +16,5 @@ requirements-dev.txt
 .pylintrc
 .pre-commit-config.yaml
 pyproject.toml
+data/
+logs/

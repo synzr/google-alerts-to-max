@@ -30,7 +30,7 @@ GMAIL_CREDENTIALS_PASS = config("GMAIL_CREDENTIALS_PASS")
 
 # Путь к БД фильтра
 FILTER_DB_PATH = config(
-    "FILTER_DB_PATH", cast=Path, default=Path(__file__).parent.parent / "filter.db"
+    "FILTER_DB_PATH", cast=Path, default=Path(__file__).parent.parent / "data/filter.db"
 )
 
 # Настройка логирования
@@ -38,5 +38,5 @@ LOG_LEVEL = config("LOG_LEVEL", default="INFO")
 LOG_FILE_PATH = config(
     "LOG_FILE_PATH",
     cast=Path,
-    default=Path(__file__).parent.parent / "google-alerts-to-max.log",
+    default=Path(__file__).parent.parent / "logs/program.log",
 )

@@ -196,3 +196,5 @@ pyrightconfig.json
 
 *.ipynb
 *.db*
+data/
+logs/
